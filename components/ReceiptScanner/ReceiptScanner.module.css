@@ -1,0 +1,470 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 1.75rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 0;
+}
+
+.uploadSection {
+  margin-top: 30px;
+}
+
+.fileInput {
+  margin-bottom: 10px;
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+.imageSection {
+  margin-top: 20px;
+}
+
+.imagePreview {
+  max-width: 100%;
+  max-height: 400px;
+  border: 1px solid #ddd;
+}
+
+.scanButton {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 16px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  min-height: 48px;
+}
+
+.scanButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.errorBox {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #fee;
+  color: #c00;
+  border-radius: 5px;
+}
+
+.parsedSection {
+  margin-top: 30px;
+}
+
+.dataBox {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.warningBanner {
+  padding: 12px;
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.warningTitle {
+  color: #b45309;
+}
+
+.warningText {
+  color: #92400e;
+}
+
+.itemsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.itemCard {
+  margin-bottom: 10px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.customItemCard {
+  border: 1px solid #a5d6a7;
+}
+
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.priceGroup,
+.qtyGroup {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.priceInput {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+.qtyInput {
+  width: 45px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.splitButton {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.splitButtonExpanded {
+  background-color: #e8e8e8;
+}
+
+.assignInput {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  min-height: 44px;
+  width: 140px;
+}
+
+.customNameInput {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 150px;
+}
+
+.expandedSection {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.assignmentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.personNameInput {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 120px;
+  min-height: 44px;
+}
+
+.assignQtyInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 50px;
+  font-size: 16px;
+  text-align: center;
+  min-height: 44px;
+}
+
+.removeButton {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ff4444;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  min-height: 44px;
+}
+
+.addPersonRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.addPersonButton {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0070f3;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  min-height: 44px;
+}
+
+.addPersonButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.assignmentStatus {
+  font-size: 13px;
+}
+
+.statusUnassigned {
+  color: #666;
+}
+
+.statusComplete {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.statusOver {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.addItemButton {
+  margin-top: 15px;
+  padding: 12px 16px;
+  border: 1px dashed #666;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  color: #666;
+  min-height: 48px;
+}
+
+.divider {
+  margin: 20px 0;
+}
+
+.totalsSection {
+  margin-top: 0;
+}
+
+.totalsSection p {
+  margin: 8px 0;
+}
+
+.percentText {
+  color: #666;
+}
+
+.calculateButton {
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  min-height: 52px;
+}
+
+.calculateButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.assignHint {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.splitSummary {
+  margin-top: 20px;
+  background-color: #e8f5e9;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #a5d6a7;
+}
+
+.splitSummary h3 {
+  margin-top: 0;
+}
+
+.personCard {
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.personHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.personName {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.personTotal {
+  font-size: 18px;
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.personBreakdown {
+  font-size: 13px;
+  color: #666;
+}
+
+.jsonSection {
+  margin-top: 20px;
+}
+
+.jsonSummary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.jsonPre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .dataBox {
+    padding: 16px;
+  }
+
+  .itemHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .itemInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .itemName {
+    font-size: 15px;
+  }
+
+  .priceQtyRow {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .priceInput {
+    width: 80px;
+    padding: 10px 12px;
+  }
+
+  .qtyInput {
+    width: 55px;
+    padding: 10px 12px;
+  }
+
+  .splitButton,
+  .assignInput {
+    width: 100%;
+  }
+
+  .customNameInput {
+    width: 100%;
+    padding: 10px 12px;
+  }
+
+  .assignmentRow {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .personNameInput {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .assignQtyInput {
+    width: 60px;
+  }
+
+  .personBreakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .personBreakdown span {
+    display: block;
+  }
+}
