@@ -1,8 +1,16 @@
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { ReceiptScanner } from '@/components/ReceiptScanner';
 import { useReceiptScanner } from '@/hooks/useReceiptScanner';
 
+// localStorage key for session
+const STORAGE_KEY_SESSION = 'receiptSplitter_currentSession';
+
 export default function Home() {
+  const router = useRouter();
+  const [sharingSession, setSharingSession] = useState(false);
+
   const {
     imagePreview,
     parsedData,
@@ -31,6 +39,42 @@ export default function Home() {
     calculateTotals,
   } = useReceiptScanner();
 
+  const handleShareWithGroup = async () => {
+    if (!parsedData || itemsTotalMismatch) return;
+
+    setSharingSession(true);
+
+    try {
+      const res = await fetch('/api/session/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          receipt: parsedData,
+          customItems,
+          priceOverrides,
+          quantityOverrides,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error('Failed to create session:', data.error);
+        setSharingSession(false);
+        return;
+      }
+
+      // Save session ID to localStorage
+      localStorage.setItem(STORAGE_KEY_SESSION, data.sessionId);
+
+      // Redirect to session page
+      router.push(`/session/${data.sessionId}`);
+    } catch (err) {
+      console.error('Failed to create session:', err);
+      setSharingSession(false);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -51,6 +95,7 @@ export default function Home() {
         itemsTotal={itemsTotal}
         itemsTotalMismatch={itemsTotalMismatch}
         uniquePersonNames={uniquePersonNames}
+        sharingSession={sharingSession}
         onImageSelect={handleImageSelect}
         onScanReceipt={handleScanReceipt}
         onAssignmentChange={handleAssignmentChange}
@@ -63,6 +108,7 @@ export default function Home() {
         onUpdateCustomItem={updateCustomItem}
         onRemoveCustomItem={removeCustomItem}
         onCalculateTotals={calculateTotals}
+        onShareWithGroup={handleShareWithGroup}
       />
     </>
   );

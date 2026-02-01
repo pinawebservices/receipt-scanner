@@ -38,3 +38,45 @@ export interface CustomItem {
   price: number;
   quantity: number;
 }
+
+// ============================================
+// Collaborative Session Types
+// ============================================
+
+// A single claim on an item by a participant
+export interface ItemClaim {
+  personName: string;
+  quantity: number;
+  claimedAt: number; // timestamp for ordering
+}
+
+// Maps item key to array of claims (supports multi-quantity claiming)
+export type SessionClaims = Record<string, ItemClaim[]>;
+
+// A collaborative bill-splitting session
+export interface Session {
+  id: string;
+  receipt: ParsedReceipt;
+  customItems: CustomItem[];
+  priceOverrides: Record<number, number>;
+  quantityOverrides: Record<number, number>;
+  participants: string[]; // People who have joined
+  claims: SessionClaims;
+  isCalculated: boolean;
+  splitResults: PersonTotal[] | null;
+  createdAt: number;
+}
+
+// API response for claim operations
+export interface ClaimResult {
+  success: boolean;
+  error?: string;
+  claimedBy?: string; // Who already claimed it (on conflict)
+}
+
+// Session state for the frontend
+export interface SessionState {
+  session: Session | null;
+  currentUser: string | null;
+  allItemsClaimed: boolean;
+}

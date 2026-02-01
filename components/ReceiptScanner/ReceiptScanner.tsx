@@ -17,6 +17,7 @@ interface ReceiptScannerProps {
   itemsTotal: number;
   itemsTotalMismatch: boolean;
   uniquePersonNames: string[];
+  sharingSession: boolean;
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onScanReceipt: () => void;
   onAssignmentChange: (itemIndex: number | string, name: string) => void;
@@ -29,6 +30,7 @@ interface ReceiptScannerProps {
   onUpdateCustomItem: (id: string, updates: Partial<CustomItem>) => void;
   onRemoveCustomItem: (id: string) => void;
   onCalculateTotals: () => void;
+  onShareWithGroup: () => void;
 }
 
 export function ReceiptScanner({
@@ -45,6 +47,7 @@ export function ReceiptScanner({
   itemsTotal,
   itemsTotalMismatch,
   uniquePersonNames,
+  sharingSession,
   onImageSelect,
   onScanReceipt,
   onAssignmentChange,
@@ -57,6 +60,7 @@ export function ReceiptScanner({
   onUpdateCustomItem,
   onRemoveCustomItem,
   onCalculateTotals,
+  onShareWithGroup,
 }: ReceiptScannerProps) {
   const [expandedItems, setExpandedItems] = useState<Record<number | string, boolean>>({});
 
@@ -147,10 +151,28 @@ export function ReceiptScanner({
                 <strong className={styles.warningTitle}>Warning:</strong>
                 <span className={styles.warningText}>
                   {' '}Items total (${itemsTotal.toFixed(2)}) doesn't match subtotal (${parsedData.subtotal?.toFixed(2)}).
-                  Please correct the prices/quantities below.
+                  Please correct the prices/quantities below, or upload better clear, aligned and centered picture.
                 </span>
               </div>
             )}
+
+            {/* Share with Group button */}
+            <div className={styles.shareSection}>
+              <button
+                onClick={onShareWithGroup}
+                disabled={itemsTotalMismatch || sharingSession}
+                className={styles.shareButton}
+              >
+                {sharingSession ? 'Creating Session...' : 'Share with Group'}
+              </button>
+              <p className={styles.shareHint}>
+                {itemsTotalMismatch
+                  ? 'Fix item totals above to enable group sharing'
+                  : 'Let everyone claim their own items'}
+              </p>
+            </div>
+
+            <hr className={styles.divider} />
 
             <h3>Items:</h3>
             {parsedData.items && parsedData.items.length > 0 ? (
