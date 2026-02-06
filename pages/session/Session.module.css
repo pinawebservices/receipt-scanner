@@ -1,85 +1,233 @@
+/* Session page — warm minimal redesign */
+
+/* Layout */
 .container {
-  max-width: 800px;
+  max-width: 448px;
   margin: 0 auto;
+  padding: 32px 20px 120px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading */
+.loadingContainer {
+  max-width: 448px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
 }
 
-.title {
-  font-size: 1.75rem;
-  margin-bottom: 8px;
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary);
 }
 
-.restaurantName {
-  color: #666;
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-}
-
-.welcomeText {
-  color: #22c55e;
-  font-weight: 500;
-  margin-bottom: 20px;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .loadingText {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
+/* Error */
+.errorContainer {
+  max-width: 448px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.errorBox {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-destructive) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  color: var(--color-destructive);
+  font-size: 0.875rem;
   text-align: center;
-  color: #666;
-  padding: 40px;
+}
+
+.errorText {
+  color: var(--color-destructive);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 /* Join flow */
+.joinContainer {
+  max-width: 448px;
+  margin: 0 auto;
+  padding: 48px 20px 32px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.joinHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.joinHeaderIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-foreground);
+  margin: 0;
+}
+
+.restaurantName {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
 .joinBox {
-  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 16px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
   padding: 24px;
-  border-radius: 8px;
-  margin-top: 20px;
 }
 
 .joinBox p {
-  margin-bottom: 16px;
-  color: #333;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+  text-align: center;
+  margin: 0;
 }
 
 .nameInput {
   width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
   padding: 14px 16px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 12px;
+  font-size: 1rem;
+  color: var(--color-foreground);
+  min-height: 52px;
+}
+
+.nameInput::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.nameInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
 }
 
 .joinButton {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 14px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
   min-height: 52px;
+  border-radius: 12px;
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.joinButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .joinButton:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Session header */
+.sessionHeader {
+  margin-bottom: 24px;
+}
+
+.sessionTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-foreground);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.welcomeText {
+  margin-top: 2px;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
 }
 
 /* Share box */
 .shareBox {
-  background-color: #e0f2fe;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
   padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #7dd3fc;
 }
 
 .shareLabel {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #0369a1;
+  color: var(--color-primary);
 }
 
 .shareRow {
@@ -89,315 +237,495 @@
 
 .shareInput {
   flex: 1;
-  padding: 10px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: var(--color-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .copyButton {
-  padding: 10px 20px;
-  font-size: 14px;
-  background-color: #0070f3;
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: none;
-  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
+  min-height: 40px;
   white-space: nowrap;
-  min-width: 80px;
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
 }
 
-.copyButton:hover {
-  background-color: #005bb5;
+.copyButtonCopied {
+  background-color: var(--color-success);
+  color: var(--color-success-foreground);
 }
 
 /* Participants */
 .participantsBox {
-  background-color: #f0fdf4;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--color-secondary) 50%, transparent);
   padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  border: 1px solid #bbf7d0;
-  color: #166534;
 }
 
-.participantsList {
+.participantsIcon {
+  flex-shrink: 0;
+  color: var(--color-muted-foreground);
+}
+
+.participantPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.participantPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
   font-weight: 500;
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+
+.participantPillCurrent {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-color: var(--color-primary);
 }
 
 .waitingText {
-  color: #666;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
   font-style: italic;
 }
 
 /* Claim error */
 .claimErrorBox {
-  background-color: #fef2f2;
-  padding: 12px 16px;
-  border-radius: 6px;
   margin-bottom: 16px;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-destructive) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  color: var(--color-destructive);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
 }
 
 .dismissButton {
-  padding: 6px 12px;
-  font-size: 12px;
-  background-color: transparent;
-  color: #dc2626;
-  border: 1px solid #dc2626;
-  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--color-destructive);
+  text-decoration: underline;
+  background: none;
+  border: none;
   cursor: pointer;
+  margin-left: 8px;
+  flex-shrink: 0;
 }
 
 /* Items section */
-.itemsSection h2 {
-  margin-bottom: 8px;
+.itemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .hintText {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 16px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  margin-bottom: 4px;
 }
 
 .itemsList {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.itemCard {
-  margin-bottom: 12px;
-  padding: 16px;
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-}
-
-.customItemCard {
-  border-color: #a5d6a7;
-}
-
-.itemHeader {
-  margin-bottom: 12px;
-}
-
-.itemInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.itemName {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.itemPrice {
-  color: #666;
-  font-size: 14px;
-}
-
-/* Claim controls */
-.claimSection {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.claimControls {
+.itemCard {
+  border-radius: 12px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 16px;
+  transition: all 0.2s;
+}
+
+.itemCardClaimed {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.itemCardFullyClaimed {
+  opacity: 0.7;
+}
+
+.customItemCard {
+  border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+}
+
+/* Item content layout */
+.itemContent {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 12px;
 }
 
-.claimButton {
-  width: 44px;
-  height: 44px;
-  font-size: 20px;
-  font-weight: bold;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  cursor: pointer;
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.itemPrice {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+
+/* Claimer pills */
+.claimerPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.claimerPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 500;
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+
+.claimerPillCurrent {
+  background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary);
+}
+
+/* Claim controls */
+.claimControls {
   display: flex;
   align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.claimButton {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
   justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .claimButton:hover:not(:disabled) {
-  background-color: #f5f5f5;
+  background-color: var(--color-accent);
 }
 
 .claimButton:disabled {
-  background-color: #f0f0f0;
-  color: #999;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
 .claimCount {
-  font-weight: 500;
-  min-width: 60px;
+  min-width: 28px;
   text-align: center;
-}
-
-.claimStatus {
-  font-size: 13px;
-}
-
-.statusComplete {
-  color: #16a34a;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
-.statusRemaining {
-  color: #666;
+.claimCountActive {
+  color: var(--color-primary);
 }
 
-.claimers {
-  font-size: 12px;
-  color: #888;
-  font-style: italic;
+.claimCountInactive {
+  color: var(--color-muted-foreground);
+}
+
+/* Item status */
+.itemStatus {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.statusComplete {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-success);
+}
+
+.statusRemaining {
+  font-size: 10px;
+  color: var(--color-muted-foreground);
 }
 
 /* Totals info */
 .totalsInfo {
-  background-color: #f5f5f5;
+  margin-top: 8px;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--color-secondary) 50%, transparent);
   padding: 16px;
-  border-radius: 6px;
-  margin-top: 20px;
-  margin-bottom: 20px;
 }
 
-.totalsInfo p {
-  margin: 6px 0;
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 4px 0;
+}
+
+.totalsLabel {
+  color: var(--color-muted-foreground);
+}
+
+.totalsValue {
+  color: var(--color-foreground);
+}
+
+.totalsDivider {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.totalsBold {
+  font-weight: 600;
+  color: var(--color-foreground);
 }
 
 /* Calculate button */
+.calculateWrapper {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .calculateButton {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 16px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
   min-height: 56px;
+  border-radius: 16px;
+  background-color: var(--color-success);
+  color: var(--color-success-foreground);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.calculateButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .calculateButton:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .calculateHint {
   text-align: center;
-  color: #666;
-  font-size: 13px;
-  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
 }
 
 /* Results section */
 .resultsSection {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.resultsSection h2 {
-  margin-bottom: 8px;
+.resultsTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0;
 }
 
 .lockedText {
-  color: #666;
-  margin-bottom: 20px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  margin: -8px 0 4px;
 }
 
 .personCard {
-  background-color: #fff;
+  border-radius: 12px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
   padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #e0e0e0;
+}
+
+.personCardCurrent {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
 .personHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  justify-content: space-between;
+}
+
+.personLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.personAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.personAvatarCurrent {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
 }
 
 .personName {
-  font-size: 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.youLabel {
+  margin-left: 6px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  font-weight: 400;
 }
 
 .personTotal {
-  font-size: 20px;
-  color: #22c55e;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
 .personBreakdown {
-  font-size: 13px;
-  color: #666;
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  padding-left: 52px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
 }
 
+/* Receipt totals in results */
 .receiptTotals {
-  background-color: #f5f5f5;
+  margin-top: 8px;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--color-secondary) 50%, transparent);
   padding: 16px;
-  border-radius: 6px;
-  margin-top: 20px;
 }
 
-.receiptTotals h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
+.receiptTotalsLabel {
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
 }
 
-.receiptTotals p {
-  margin: 6px 0;
+/* Floating bottom bar */
+.floatingBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
 }
 
-/* Error states */
-.errorBox {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #fee;
-  color: #c00;
-  border-radius: 5px;
+.floatingBarInner {
+  max-width: 448px;
+  margin: 0 auto;
 }
 
-.errorText {
-  color: #dc2626;
-  font-size: 14px;
-  margin-top: 12px;
+.floatingBarContent {
+  margin: 0 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 16px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 16px 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
 }
 
-.backButton {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 16px;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.floatingBarLabel {
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
+.floatingBarTotal {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
 /* Mobile responsive */
 @media (max-width: 600px) {
   .container {
-    padding: 16px;
+    padding: 24px 16px 120px;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .joinContainer {
+    padding: 40px 16px 24px;
   }
 
   .shareRow {
@@ -406,25 +734,21 @@
 
   .copyButton {
     width: 100%;
-  }
-
-  .itemInfo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-
-  .claimControls {
     justify-content: center;
   }
 
-  .personBreakdown {
-    display: flex;
+  .itemContent {
     flex-direction: column;
-    gap: 2px;
+    gap: 12px;
   }
 
-  .personBreakdown span {
-    display: block;
+  .claimControls {
+    align-self: flex-end;
+  }
+
+  .personBreakdown {
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 52px;
   }
 }

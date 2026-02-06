@@ -1,4 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import {
+  Scissors,
+  Camera,
+  Upload,
+  Loader2,
+  Users,
+  AlertTriangle,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 
 import { ParsedReceipt, ItemAssignments, ItemAssignment, PersonTotal, CustomItem } from '@/types/receipt';
 import styles from './ReceiptScanner.module.css';
@@ -63,6 +75,7 @@ export function ReceiptScanner({
   onShareWithGroup,
 }: ReceiptScannerProps) {
   const [expandedItems, setExpandedItems] = useState<Record<number | string, boolean>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleExpanded = (index: number | string) => {
     setExpandedItems((prev) => ({ ...prev, [index]: !prev[index] }));
@@ -102,79 +115,130 @@ export function ReceiptScanner({
         ))}
       </datalist>
 
-      <h1 className={styles.title}>Receipt Splitter</h1>
-      <p className={styles.subtitle}>Upload a receipt image to start</p>
-      <p><span><b>Note: </b></span> Make sure the image is clear, vertically aligned and all individual items, totals, taxes, etc. are clear for best accuracy.</p>
+      {/* Header */}
+      <header className={styles.header}>
+        <div className={styles.headerIcon}>
+          <Scissors size={28} />
+        </div>
+        <h1 className={styles.title}>Split</h1>
+        <p className={styles.subtitle}>Split bills with friends, effortlessly</p>
+      </header>
 
+      {/* Upload section */}
       <div className={styles.uploadSection}>
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={onImageSelect}
-          className={styles.fileInput}
+          className={styles.hiddenInput}
+          aria-label="Upload receipt image"
         />
 
-        {imagePreview && (
+        {!imagePreview ? (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className={styles.uploadCard}
+          >
+            <div className={styles.uploadIconCircle}>
+              <Camera size={32} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center' }}>
+              <span className={styles.uploadLabel}>Upload a receipt</span>
+              <span className={styles.uploadHint}>Take a photo or choose from your gallery</span>
+            </div>
+          </button>
+        ) : (
           <div className={styles.imageSection}>
-            <h3>Receipt Image:</h3>
-            <img
-              src={imagePreview}
-              alt="Receipt preview"
-              className={styles.imagePreview}
-            />
+            <div className={styles.imageWrapper}>
+              <img
+                src={imagePreview}
+                alt="Receipt preview"
+                className={styles.imagePreview}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className={styles.changeButton}
+              >
+                <Upload size={14} />
+                Change
+              </button>
+            </div>
 
             <button
               onClick={onScanReceipt}
               disabled={loading}
               className={styles.scanButton}
             >
-              {loading ? 'Scanning...' : 'Scan Receipt'}
+              {loading ? (
+                <>
+                  <Loader2 size={20} className={styles.spinner} />
+                  Scanning...
+                </>
+              ) : (
+                'Scan Receipt'
+              )}
             </button>
           </div>
         )}
       </div>
 
       {error && (
-        <div className={styles.errorBox}>
-          <strong>Error:</strong> {error}
-        </div>
+        <div className={styles.errorBox}>{error}</div>
       )}
 
       {parsedData && (
         <div className={styles.parsedSection}>
-          <h2>Parsed Receipt Data:</h2>
+          {/* Share with Group button */}
+          <button
+            onClick={onShareWithGroup}
+            disabled={itemsTotalMismatch || sharingSession}
+            className={styles.shareButton}
+          >
+            {sharingSession ? (
+              <>
+                <Loader2 size={20} className={styles.spinner} />
+                Creating session...
+              </>
+            ) : (
+              <>
+                <Users size={20} />
+                Split with friends
+              </>
+            )}
+          </button>
+          {itemsTotalMismatch && (
+            <p className={styles.shareHint}>
+              Fix item totals to enable group sharing
+            </p>
+          )}
 
-          <div className={styles.dataBox}>
-            {/* Validation warning - at top */}
+          {/* Items list */}
+          <div className={styles.itemsWrapper}>
+            {/* Validation warning */}
             {itemsTotalMismatch && (
               <div className={styles.warningBanner}>
-                <strong className={styles.warningTitle}>Warning:</strong>
-                <span className={styles.warningText}>
-                  {' '}Items total (${itemsTotal.toFixed(2)}) doesn't match subtotal (${parsedData.subtotal?.toFixed(2)}).
-                  Please correct the prices/quantities below, or upload better clear, aligned and centered picture.
-                </span>
+                <div className={styles.warningIcon}>
+                  <AlertTriangle size={20} />
+                </div>
+                <div className={styles.warningContent}>
+                  <span className={styles.warningTitle}>Total mismatch</span>
+                  <span className={styles.warningText}>
+                    Items total (${itemsTotal.toFixed(2)}) doesn&apos;t match subtotal ($
+                    {parsedData.subtotal?.toFixed(2)}). Correct the prices or quantities below.
+                  </span>
+                </div>
               </div>
             )}
 
-            {/* Share with Group button */}
-            <div className={styles.shareSection}>
-              <button
-                onClick={onShareWithGroup}
-                disabled={itemsTotalMismatch || sharingSession}
-                className={styles.shareButton}
-              >
-                {sharingSession ? 'Creating Session...' : 'Share with Group'}
-              </button>
-              <p className={styles.shareHint}>
-                {itemsTotalMismatch
-                  ? 'Fix item totals above to enable group sharing'
-                  : 'Let everyone claim their own items'}
-              </p>
-            </div>
+            {/* Restaurant name */}
+            {parsedData.restaurant_name && (
+              <p className={styles.restaurantName}>{parsedData.restaurant_name}</p>
+            )}
 
-            <hr className={styles.divider} />
-
-            <h3>Items:</h3>
+            {/* Parsed items */}
             {parsedData.items && parsedData.items.length > 0 ? (
               <ul className={styles.itemsList}>
                 {parsedData.items.map((item, index) => {
@@ -187,11 +251,10 @@ export function ReceiptScanner({
 
                   return (
                     <li key={index} className={styles.itemCard}>
-                      {/* Item header row */}
                       <div className={styles.itemHeader}>
-                        <span className={styles.itemInfo}>
-                          <strong className={styles.itemName}>{item.name}</strong>
-                          <span className={styles.priceQtyRow}>
+                        <div className={styles.itemInfo}>
+                          <span className={styles.itemName}>{item.name}</span>
+                          <div className={styles.priceQtyRow}>
                             <span className={styles.priceGroup}>
                               $
                               <input
@@ -208,42 +271,47 @@ export function ReceiptScanner({
                                 className={styles.priceInput}
                               />
                             </span>
-                            <span className={styles.qtyGroup}>
-                              x
-                              <input
-                                type="text"
-                                inputMode="numeric"
-                                defaultValue={itemQty}
-                                key={`qty-${index}-${parsedData?.items[index]?.quantity}`}
-                                onBlur={(e) => {
-                                  const val = parseInt(e.target.value);
-                                  if (!isNaN(val) && val >= 0) {
-                                    onUpdateItemQuantity(index, val);
-                                  }
-                                }}
-                                className={styles.qtyInput}
-                              />
-                            </span>
-                          </span>
-                        </span>
+                            {itemQty > 1 && (
+                              <span className={styles.qtyGroup}>
+                                x
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  defaultValue={itemQty}
+                                  key={`qty-${index}-${parsedData?.items[index]?.quantity}`}
+                                  onBlur={(e) => {
+                                    const val = parseInt(e.target.value);
+                                    if (!isNaN(val) && val >= 0) {
+                                      onUpdateItemQuantity(index, val);
+                                    }
+                                  }}
+                                  className={styles.qtyInput}
+                                />
+                              </span>
+                            )}
+                          </div>
+                        </div>
 
-                        {isMultiQuantity ? (
-                          <button
-                            onClick={() => toggleExpanded(index)}
-                            className={`${styles.splitButton} ${isExpanded ? styles.splitButtonExpanded : ''}`}
-                          >
-                            {isExpanded ? 'Collapse' : 'Split Item'}
-                          </button>
-                        ) : (
-                          <input
-                            type="text"
-                            placeholder="Who's paying?"
-                            list="person-names"
-                            value={itemAssignments[0]?.name || ''}
-                            onChange={(e) => onAssignmentChange(index, e.target.value)}
-                            className={styles.assignInput}
-                          />
-                        )}
+                        <div className={styles.itemControls}>
+                          {isMultiQuantity ? (
+                            <button
+                              onClick={() => toggleExpanded(index)}
+                              className={`${styles.splitButton} ${isExpanded ? styles.splitButtonExpanded : ''}`}
+                            >
+                              Split
+                              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </button>
+                          ) : (
+                            <input
+                              type="text"
+                              placeholder="Who?"
+                              list="person-names"
+                              value={itemAssignments[0]?.name || ''}
+                              onChange={(e) => onAssignmentChange(index, e.target.value)}
+                              className={styles.assignInput}
+                            />
+                          )}
+                        </div>
                       </div>
 
                       {/* Expanded section for multi-quantity items */}
@@ -259,7 +327,7 @@ export function ReceiptScanner({
                                 onChange={(e) => onUpdateAssignment(index, aIndex, { name: e.target.value })}
                                 className={styles.personNameInput}
                               />
-                              <span>×</span>
+                              <span className={styles.timesSymbol}>x</span>
                               <input
                                 type="text"
                                 inputMode="numeric"
@@ -276,8 +344,9 @@ export function ReceiptScanner({
                               <button
                                 onClick={() => onRemoveAssignment(index, aIndex)}
                                 className={styles.removeButton}
+                                aria-label="Remove person"
                               >
-                                Remove
+                                <Trash2 size={14} />
                               </button>
                             </div>
                           ))}
@@ -288,13 +357,14 @@ export function ReceiptScanner({
                               disabled={remainingQty <= 0}
                               className={styles.addPersonButton}
                             >
-                              + Add Person
+                              <Plus size={14} />
+                              Add person
                             </button>
                             <span className={`${styles.assignmentStatus} ${getStatusClass(remainingQty)}`}>
                               {remainingQty > 0
-                                ? `${remainingQty} of ${itemQty} unassigned`
+                                ? `${remainingQty} of ${itemQty} left`
                                 : remainingQty < 0
-                                  ? `Over-assigned by ${Math.abs(remainingQty)}!`
+                                  ? `Over by ${Math.abs(remainingQty)}`
                                   : 'All assigned'}
                             </span>
                           </div>
@@ -308,10 +378,10 @@ export function ReceiptScanner({
               <p>No items found</p>
             )}
 
-            {/* Custom items section */}
+            {/* Custom items */}
             {customItems.length > 0 && (
               <>
-                <h4 style={{ marginTop: '20px', marginBottom: '10px', color: '#666' }}>Added Items:</h4>
+                <p className={styles.customItemsHeader}>Added items</p>
                 <ul className={styles.itemsList}>
                   {customItems.map((item) => {
                     const itemKey = `custom_${item.id}`;
@@ -324,7 +394,7 @@ export function ReceiptScanner({
                     return (
                       <li key={item.id} className={`${styles.itemCard} ${styles.customItemCard}`}>
                         <div className={styles.itemHeader}>
-                          <span className={styles.itemInfo}>
+                          <div className={styles.itemInfo}>
                             <input
                               type="text"
                               placeholder="Item name"
@@ -332,7 +402,7 @@ export function ReceiptScanner({
                               onChange={(e) => onUpdateCustomItem(item.id, { name: e.target.value })}
                               className={styles.customNameInput}
                             />
-                            <span className={styles.priceQtyRow}>
+                            <div className={styles.priceQtyRow}>
                               <span className={styles.priceGroup}>
                                 $
                                 <input
@@ -359,33 +429,37 @@ export function ReceiptScanner({
                                   className={styles.qtyInput}
                                 />
                               </span>
-                            </span>
-                          </span>
+                            </div>
+                          </div>
 
-                          {isMultiQuantity ? (
+                          <div className={styles.itemControls}>
+                            {isMultiQuantity ? (
+                              <button
+                                onClick={() => toggleExpanded(itemKey)}
+                                className={`${styles.splitButton} ${isExpanded ? styles.splitButtonExpanded : ''}`}
+                              >
+                                Split
+                                {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                              </button>
+                            ) : (
+                              <input
+                                type="text"
+                                placeholder="Who?"
+                                list="person-names"
+                                value={itemAssignments[0]?.name || ''}
+                                onChange={(e) => onAssignmentChange(itemKey, e.target.value)}
+                                className={styles.assignInput}
+                              />
+                            )}
+
                             <button
-                              onClick={() => toggleExpanded(itemKey)}
-                              className={`${styles.splitButton} ${isExpanded ? styles.splitButtonExpanded : ''}`}
+                              onClick={() => onRemoveCustomItem(item.id)}
+                              className={styles.removeButton}
+                              aria-label="Remove item"
                             >
-                              {isExpanded ? 'Collapse' : 'Split Item'}
+                              <Trash2 size={16} />
                             </button>
-                          ) : (
-                            <input
-                              type="text"
-                              placeholder="Who's paying?"
-                              list="person-names"
-                              value={itemAssignments[0]?.name || ''}
-                              onChange={(e) => onAssignmentChange(itemKey, e.target.value)}
-                              className={styles.assignInput}
-                            />
-                          )}
-
-                          <button
-                            onClick={() => onRemoveCustomItem(item.id)}
-                            className={styles.removeButton}
-                          >
-                            Remove
-                          </button>
+                          </div>
                         </div>
 
                         {/* Expanded section for multi-quantity custom items */}
@@ -401,7 +475,7 @@ export function ReceiptScanner({
                                   onChange={(e) => onUpdateAssignment(itemKey, aIndex, { name: e.target.value })}
                                   className={styles.personNameInput}
                                 />
-                                <span>×</span>
+                                <span className={styles.timesSymbol}>x</span>
                                 <input
                                   type="text"
                                   inputMode="numeric"
@@ -418,8 +492,9 @@ export function ReceiptScanner({
                                 <button
                                   onClick={() => onRemoveAssignment(itemKey, aIndex)}
                                   className={styles.removeButton}
+                                  aria-label="Remove person"
                                 >
-                                  Remove
+                                  <Trash2 size={14} />
                                 </button>
                               </div>
                             ))}
@@ -430,13 +505,14 @@ export function ReceiptScanner({
                                 disabled={remainingQty <= 0}
                                 className={styles.addPersonButton}
                               >
-                                + Add Person
+                                <Plus size={14} />
+                                Add person
                               </button>
                               <span className={`${styles.assignmentStatus} ${getStatusClass(remainingQty)}`}>
                                 {remainingQty > 0
-                                  ? `${remainingQty} of ${item.quantity} unassigned`
+                                  ? `${remainingQty} of ${item.quantity} left`
                                   : remainingQty < 0
-                                    ? `Over-assigned by ${Math.abs(remainingQty)}!`
+                                    ? `Over by ${Math.abs(remainingQty)}`
                                     : 'All assigned'}
                               </span>
                             </div>
@@ -454,35 +530,45 @@ export function ReceiptScanner({
               onClick={onAddCustomItem}
               className={styles.addItemButton}
             >
-              + Add Missing Item
+              <Plus size={16} />
+              Add missing item
             </button>
 
-            <hr className={styles.divider} />
-
+            {/* Totals */}
             <div className={styles.totalsSection}>
-              <h3>Totals:</h3>
-              <p><strong>Subtotal:</strong> ${parsedData.subtotal?.toFixed(2) || 'N/A'}</p>
-              <p>
-                <strong>Tax:</strong> ${parsedData.tax?.toFixed(2) || 'N/A'}
-                {parsedData.tax != null && parsedData.subtotal != null && parsedData.subtotal > 0 && (
-                  <span className={styles.percentText}> ({((parsedData.tax / parsedData.subtotal) * 100).toFixed(1)}%)</span>
-                )}
-              </p>
-              <p>
-                <strong>Tip:</strong> ${parsedData.tip?.toFixed(2) || 'N/A'}
-                {parsedData.tip != null && parsedData.subtotal != null && parsedData.subtotal > 0 && (
-                  <span className={styles.percentText}> ({((parsedData.tip / parsedData.subtotal) * 100).toFixed(1)}%)</span>
-                )}
-              </p>
-              <p><strong>Total:</strong> ${parsedData.total?.toFixed(2) || 'N/A'}</p>
-
-              {parsedData.restaurant_name && (
-                <p><strong>Restaurant:</strong> {parsedData.restaurant_name}</p>
-              )}
+              <div className={styles.totalsRow}>
+                <span className={styles.totalsLabel}>
+                  Subtotal
+                </span>
+                <span className={styles.totalsValue}>${parsedData.subtotal?.toFixed(2) || 'N/A'}</span>
+              </div>
+              <div className={styles.totalsRow}>
+                <span className={styles.totalsLabel}>
+                  Tax
+                  {parsedData.tax != null && parsedData.subtotal != null && parsedData.subtotal > 0 && (
+                    <span className={styles.percentText}>({((parsedData.tax / parsedData.subtotal) * 100).toFixed(1)}%)</span>
+                  )}
+                </span>
+                <span className={styles.totalsValue}>${parsedData.tax?.toFixed(2) || 'N/A'}</span>
+              </div>
+              <div className={styles.totalsRow}>
+                <span className={styles.totalsLabel}>
+                  Tip
+                  {parsedData.tip != null && parsedData.subtotal != null && parsedData.subtotal > 0 && (
+                    <span className={styles.percentText}>({((parsedData.tip / parsedData.subtotal) * 100).toFixed(1)}%)</span>
+                  )}
+                </span>
+                <span className={styles.totalsValue}>${parsedData.tip?.toFixed(2) || 'N/A'}</span>
+              </div>
+              <div className={`${styles.totalsRow} ${styles.totalsDivider}`}>
+                <span className={styles.totalsBold}>Total</span>
+                <span className={styles.totalsBold}>${parsedData.total?.toFixed(2) || 'N/A'}</span>
+              </div>
             </div>
+          </div>
 
-            <hr className={styles.divider} />
-
+          {/* Calculate button */}
+          <div>
             <button
               onClick={onCalculateTotals}
               disabled={!allItemsAssigned}
@@ -492,41 +578,46 @@ export function ReceiptScanner({
             </button>
             {!allItemsAssigned && (
               <p className={styles.assignHint}>
-                Assign all items to enable calculation
+                Assign all items to a person to calculate
               </p>
             )}
           </div>
 
+          {/* Split summary */}
           {personTotals && personTotals.length > 0 && (
             <div className={styles.splitSummary}>
-              <h3>Split Summary</h3>
+              <h3 className={styles.splitSummaryTitle}>Split Summary</h3>
               {personTotals.map((person) => (
                 <div key={person.name} className={styles.personCard}>
                   <div className={styles.personHeader}>
-                    <strong className={styles.personName}>{person.name}</strong>
-                    <strong className={styles.personTotal}>
+                    <div className={styles.personLeft}>
+                      <div className={styles.personAvatar}>
+                        {person.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className={styles.personName}>{person.name}</span>
+                    </div>
+                    <span className={styles.personTotal}>
                       ${person.total.toFixed(2)}
-                    </strong>
+                    </span>
                   </div>
                   <div className={styles.personBreakdown}>
-                    <span>Subtotal: ${person.subtotal.toFixed(2)}</span>
-                    <span> | Tax: ${person.tax.toFixed(2)}</span>
-                    <span> | Tip: ${person.tip.toFixed(2)}</span>
+                    <span>Food ${person.subtotal.toFixed(2)}</span>
+                    <span>Tax ${person.tax.toFixed(2)}</span>
+                    <span>Tip ${person.tip.toFixed(2)}</span>
                   </div>
                 </div>
               ))}
             </div>
           )}
-
-          {/*<details className={styles.jsonSection}>*/}
-          {/*  <summary className={styles.jsonSummary}>*/}
-          {/*    Show Raw JSON Response*/}
-          {/*  </summary>*/}
-          {/*  <pre className={styles.jsonPre}>*/}
-          {/*    {JSON.stringify(parsedData, null, 2)}*/}
-          {/*  </pre>*/}
-          {/*</details>*/}
         </div>
+      )}
+
+      {/* Empty state tip */}
+      {!parsedData && !loading && !error && (
+        <p className={styles.tip}>
+          Tip: Make sure the receipt image is clear, vertically aligned, and
+          all items and totals are visible for best accuracy.
+        </p>
       )}
     </div>
   );
