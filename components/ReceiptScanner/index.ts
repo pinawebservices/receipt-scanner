@@ -1,1 +1,0 @@
-export { ReceiptScanner } from './ReceiptScanner';
