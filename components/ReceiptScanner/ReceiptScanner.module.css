@@ -1,439 +1,775 @@
+/* ReceiptScanner — warm minimal redesign */
+
+/* Layout */
 .container {
-  max-width: 800px;
+  max-width: 448px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 48px 20px 32px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* App header */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.headerIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--color-primary);
 }
 
 .title {
-  font-size: 1.75rem;
-  margin-bottom: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-foreground);
+  margin: 0;
 }
 
 .subtitle {
-  color: #666;
-  margin-bottom: 0;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
 }
 
+.tip {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  line-height: 1.6;
+}
+
+/* Upload section */
 .uploadSection {
-  margin-top: 30px;
+  margin-bottom: 24px;
 }
 
-.fileInput {
-  margin-bottom: 10px;
-  font-size: 16px; /* Prevents iOS zoom on focus */
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
+.uploadCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  border-radius: 16px;
+  border: 2px dashed var(--color-border);
+  background-color: var(--color-card);
+  padding: 40px 20px;
+  min-height: 200px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uploadCard:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+.uploadCard:active {
+  transform: scale(0.98);
+}
+
+.uploadIconCircle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.uploadLabel {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+.uploadHint {
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
+/* Image preview */
 .imageSection {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.imageWrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
 }
 
 .imagePreview {
-  max-width: 100%;
-  max-height: 400px;
-  border: 1px solid #ddd;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  display: block;
+}
+
+.changeButton {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.changeButton:hover {
+  background-color: var(--color-card);
 }
 
 .scanButton {
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 16px;
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  min-height: 48px;
+  padding: 16px 24px;
+  min-height: 56px;
+  border-radius: 16px;
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.scanButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .scanButton:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Error */
 .errorBox {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #fee;
-  color: #c00;
-  border-radius: 5px;
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-destructive) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+  color: var(--color-destructive);
+  font-size: 0.875rem;
 }
 
+/* Parsed section */
 .parsedSection {
-  margin-top: 30px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.dataBox {
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 5px;
-}
-
-.warningBanner {
-  padding: 12px;
-  background-color: #fef3c7;
-  border: 1px solid #f59e0b;
-  border-radius: 5px;
-  margin-bottom: 15px;
-}
-
-.warningTitle {
-  color: #b45309;
-}
-
-.warningText {
-  color: #92400e;
-}
-
-/* Share with Group section */
-.shareSection {
-  margin-bottom: 0;
-}
-
+/* Share button */
 .shareButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #8b5cf6;
-  color: white;
+  padding: 16px 24px;
+  min-height: 56px;
+  border-radius: 16px;
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
   border: none;
-  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  min-height: 52px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.shareButton:hover:not(:disabled) {
-  background-color: #7c3aed;
+.shareButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .shareButton:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .shareHint {
-  font-size: 13px;
-  color: #666;
-  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
   text-align: center;
-  margin-bottom: 0;
+  margin-top: -16px;
+}
+
+/* Warning banner */
+.warningBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+}
+
+.warningIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-warning);
+}
+
+.warningContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warningTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+.warningText {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+
+/* Restaurant name */
+.restaurantName {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+}
+
+/* Items section */
+.itemsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .itemsList {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .itemCard {
-  margin-bottom: 10px;
-  padding: 12px;
-  background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: var(--color-card);
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s;
 }
 
 .customItemCard {
-  border: 1px solid #a5d6a7;
+  border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+  background-color: color-mix(in srgb, var(--color-success) 5%, transparent);
 }
 
+/* Item header */
 .itemHeader {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .itemInfo {
   flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
   min-width: 0;
 }
 
 .itemName {
-  font-weight: bold;
-  word-break: break-word;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  line-height: 1.3;
+  text-wrap: balance;
+  display: block;
+}
+
+.itemControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priceQtyRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
 }
 
 .priceGroup,
 .qtyGroup {
   display: inline-flex;
   align-items: center;
+  gap: 2px;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
   white-space: nowrap;
 }
 
 .priceInput {
-  width: 70px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #fff;
+  width: 64px;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  color: var(--color-foreground);
+}
+
+.priceInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
 }
 
 .qtyInput {
-  width: 45px;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+  width: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 4px 8px;
+  font-size: 0.875rem;
   text-align: center;
-  background-color: #fff;
+  color: var(--color-foreground);
 }
 
+.qtyInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+/* Split button */
 .splitButton {
-  padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border: none;
   cursor: pointer;
-  font-size: 14px;
+  transition: background-color 0.2s;
   min-height: 44px;
   white-space: nowrap;
 }
 
+.splitButton:hover {
+  background-color: var(--color-accent);
+}
+
 .splitButtonExpanded {
-  background-color: #e8e8e8;
+  background-color: var(--color-accent);
 }
 
+/* Assignment input */
 .assignInput {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+  width: 112px;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--color-foreground);
   min-height: 44px;
-  width: 140px;
 }
 
+.assignInput::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.assignInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+/* Custom item name input */
 .customNameInput {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
-  width: 150px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
 }
 
+.customNameInput::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.customNameInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+/* Remove / delete button */
+.removeButton {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background-color: transparent;
+  color: var(--color-destructive);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.removeButton:hover {
+  background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent);
+}
+
+/* Expanded split section */
 .expandedSection {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .assignmentRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .personNameInput {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  width: 120px;
+  flex: 1;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--color-foreground);
   min-height: 44px;
+}
+
+.personNameInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+
+.timesSymbol {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
 }
 
 .assignQtyInput {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 50px;
-  font-size: 16px;
+  width: 48px;
+  border-radius: 8px;
+  border: 1px solid var(--color-input);
+  background-color: var(--color-background);
+  padding: 8px;
+  font-size: 0.875rem;
   text-align: center;
+  color: var(--color-foreground);
   min-height: 44px;
 }
 
-.removeButton {
-  padding: 10px 14px;
-  border: none;
-  border-radius: 4px;
-  background-color: #ff4444;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  min-height: 44px;
+.assignQtyInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring);
 }
 
 .addPersonRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .addPersonButton {
-  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: none;
-  border-radius: 4px;
-  background-color: #0070f3;
-  color: white;
+  background-color: transparent;
+  color: var(--color-primary);
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
   min-height: 44px;
 }
 
+.addPersonButton:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
 .addPersonButton:disabled {
-  background-color: #ccc;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .assignmentStatus {
-  font-size: 13px;
+  font-size: 0.75rem;
 }
 
 .statusUnassigned {
-  color: #666;
+  color: var(--color-muted-foreground);
 }
 
 .statusComplete {
-  color: #16a34a;
-  font-weight: bold;
+  color: var(--color-success);
+  font-weight: 500;
 }
 
 .statusOver {
-  color: #dc2626;
-  font-weight: bold;
+  color: var(--color-destructive);
+  font-weight: 500;
 }
 
+/* Add item button */
 .addItemButton {
-  margin-top: 15px;
-  padding: 12px 16px;
-  border: 1px dashed #666;
-  border-radius: 4px;
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  color: #666;
+  padding: 12px 16px;
   min-height: 48px;
+  border-radius: 12px;
+  border: 2px dashed var(--color-border);
+  background-color: color-mix(in srgb, var(--color-card) 50%, transparent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.divider {
-  margin: 20px 0;
+.addItemButton:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  color: var(--color-foreground);
 }
 
+/* Totals section */
 .totalsSection {
-  margin-top: 0;
+  border-radius: 12px;
+  background-color: color-mix(in srgb, var(--color-secondary) 50%, transparent);
+  padding: 16px;
 }
 
-.totalsSection p {
-  margin: 8px 0;
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  padding: 4px 0;
+}
+
+.totalsLabel {
+  color: var(--color-muted-foreground);
+}
+
+.totalsValue {
+  color: var(--color-foreground);
 }
 
 .percentText {
-  color: #666;
+  font-size: 0.75rem;
+  margin-left: 4px;
 }
 
+.totalsDivider {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.totalsBold {
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+/* Calculate button */
 .calculateButton {
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
-  min-height: 52px;
+  padding: 16px 24px;
+  min-height: 56px;
+  border-radius: 16px;
+  background-color: var(--color-success);
+  color: var(--color-success-foreground);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.calculateButton:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .calculateButton:disabled {
-  background-color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .assignHint {
-  font-size: 13px;
-  color: #666;
-  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
   text-align: center;
 }
 
+/* Split summary */
 .splitSummary {
-  margin-top: 20px;
-  background-color: #e8f5e9;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #a5d6a7;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.splitSummary h3 {
-  margin-top: 0;
+.splitSummaryTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-foreground);
 }
 
 .personCard {
-  background-color: #fff;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  padding: 16px;
 }
 
 .personHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  gap: 10px;
+  justify-content: space-between;
+}
+
+.personLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.personAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
 .personName {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
 }
 
 .personTotal {
-  font-size: 18px;
-  color: #22c55e;
-  font-weight: bold;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary);
 }
 
 .personBreakdown {
-  font-size: 13px;
-  color: #666;
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  padding-left: 52px;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
 }
 
-.jsonSection {
-  margin-top: 20px;
+/* Custom items header */
+.customItemsHeader {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+  margin-top: 8px;
 }
 
-.jsonSummary {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.jsonPre {
-  background-color: #f5f5f5;
-  padding: 15px;
-  border-radius: 5px;
-  overflow: auto;
-  font-size: 12px;
-}
-
-/* Mobile responsive styles */
+/* Mobile responsive */
 @media (max-width: 600px) {
   .container {
-    padding: 16px;
-  }
-
-  .title {
-    font-size: 1.5rem;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-  }
-
-  .dataBox {
-    padding: 16px;
+    padding: 40px 16px 24px;
   }
 
   .itemHeader {
@@ -442,31 +778,8 @@
     gap: 12px;
   }
 
-  .itemInfo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .itemName {
-    font-size: 15px;
-  }
-
-  .priceQtyRow {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .priceInput {
-    width: 80px;
-    padding: 10px 12px;
-  }
-
-  .qtyInput {
-    width: 55px;
-    padding: 10px 12px;
+  .itemControls {
+    width: 100%;
   }
 
   .splitButton,
@@ -476,30 +789,11 @@
 
   .customNameInput {
     width: 100%;
-    padding: 10px 12px;
-  }
-
-  .assignmentRow {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .personNameInput {
-    flex: 1;
-    min-width: 100px;
-  }
-
-  .assignQtyInput {
-    width: 60px;
   }
 
   .personBreakdown {
-    display: flex;
     flex-direction: column;
     gap: 2px;
-  }
-
-  .personBreakdown span {
-    display: block;
+    padding-left: 52px;
   }
 }

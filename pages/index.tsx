@@ -78,7 +78,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Receipt Scanner - Proof of Concept</title>
+        <title>Split - Split bills with friends</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <ReceiptScanner
