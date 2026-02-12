@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { track } from '@/lib/analytics';
 import { ReceiptScanner } from '@/components/ReceiptScanner';
 import { useReceiptScanner } from '@/hooks/useReceiptScanner';
 
@@ -66,6 +67,12 @@ export default function Home() {
 
       // Save session ID to localStorage
       localStorage.setItem(STORAGE_KEY_SESSION, data.sessionId);
+
+      track('session_created', {
+        item_count: parsedData.items?.length || 0,
+        custom_item_count: customItems.length,
+        restaurant: parsedData.restaurant_name || 'unknown',
+      });
 
       // Redirect to session page
       router.push(`/session/${data.sessionId}`);

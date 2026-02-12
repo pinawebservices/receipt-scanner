@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { track } from '@/lib/analytics';
 import { ParsedReceipt, ItemAssignments, ItemAssignment, PersonTotal, CustomItem } from '@/types/receipt';
 
 interface UseReceiptScannerReturn {
@@ -167,6 +168,10 @@ export function useReceiptScanner(): UseReceiptScannerReturn {
       .sort((a, b) => a.name.localeCompare(b.name));
 
     setPersonTotals(totals);
+    track('solo_calculated', {
+      person_count: totals.length,
+      total: parsedData?.total,
+    });
   };
 
   const compressImage = (base64Image: string, maxWidth = 2000): Promise<string> => {
@@ -326,8 +331,15 @@ export function useReceiptScanner(): UseReceiptScannerReturn {
           setQuantityOverrides({}); // Reset quantity overrides for new receipt
           setCustomItems([]); // Reset custom items for new receipt
           setPersonTotals(null); // Reset calculated totals
+          track('receipt_scanned', {
+            item_count: data.items?.length || 0,
+            restaurant: data.restaurant_name || 'unknown',
+            total: data.total,
+          });
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'An error occurred');
+          const errorMsg = err instanceof Error ? err.message : 'An error occurred';
+          setError(errorMsg);
+          track('scan_failed', { error: errorMsg });
         } finally {
           setLoading(false);
         }

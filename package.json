@@ -12,6 +12,7 @@
     "ioredis": "^5.9.2",
     "lucide-react": "^0.563.0",
     "next": "14.0.4",
+    "posthog-js": "^1.345.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

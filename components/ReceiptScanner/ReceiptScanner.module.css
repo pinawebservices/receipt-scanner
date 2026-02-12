@@ -45,6 +45,55 @@
   color: var(--color-muted-foreground);
 }
 
+/* How it works */
+.howItWorks {
+  margin-top: 32px;
+}
+
+.howItWorksTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.stepsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.stepNumber {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepText {
+  font-size: 0.8125rem;
+  color: var(--color-muted-foreground);
+  line-height: 1.5;
+  padding-top: 4px;
+}
+
 .tip {
   margin-top: 24px;
   text-align: center;

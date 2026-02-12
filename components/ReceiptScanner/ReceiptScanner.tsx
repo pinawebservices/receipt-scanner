@@ -120,8 +120,8 @@ export function ReceiptScanner({
         <div className={styles.headerIcon}>
           <Scissors size={28} />
         </div>
-        <h1 className={styles.title}>Split</h1>
-        <p className={styles.subtitle}>Split bills with friends, effortlessly</p>
+        <h1 className={styles.title}>Divvy</h1>
+        <p className={styles.subtitle}>Divvy up bills with friends, effortlessly</p>
       </header>
 
       {/* Upload section */}
@@ -612,12 +612,33 @@ export function ReceiptScanner({
         </div>
       )}
 
-      {/* Empty state tip */}
+      {/* How it works + tip */}
       {!parsedData && !loading && !error && (
-        <p className={styles.tip}>
-          Tip: Make sure the receipt image is clear, vertically aligned, and
-          all items and totals are visible for best accuracy.
-        </p>
+        <div className={styles.howItWorks}>
+          <h2 className={styles.howItWorksTitle}>How it works</h2>
+          <ol className={styles.stepsList}>
+            <li className={styles.step}>
+              <span className={styles.stepNumber}>1</span>
+              <span className={styles.stepText}>Upload or snap a photo of your receipt</span>
+            </li>
+            <li className={styles.step}>
+              <span className={styles.stepNumber}>2</span>
+              <span className={styles.stepText}>We scan and pull out every item automatically</span>
+            </li>
+            <li className={styles.step}>
+              <span className={styles.stepNumber}>3</span>
+              <span className={styles.stepText}>Assign names to the items or share a link with friends so everyone can claim their own items</span>
+            </li>
+            <li className={styles.step}>
+              <span className={styles.stepNumber}>4</span>
+              <span className={styles.stepText}>See exactly what each person owes — tax and tip included</span>
+            </li>
+          </ol>
+          <p className={styles.tip}>
+            Tip: Make sure the receipt image is clear, vertically aligned, and
+            all items and totals are visible for best accuracy.
+          </p>
+        </div>
       )}
     </div>
   );
