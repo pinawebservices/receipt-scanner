@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Scissors,
 } from 'lucide-react';
+import { track, identifyUser } from '@/lib/analytics';
 import { Session, PersonTotal } from '@/types/receipt';
 import styles from './Session.module.css';
 
@@ -121,6 +122,9 @@ export default function SessionPage() {
       localStorage.setItem(STORAGE_KEY_SESSION, id as string);
       setCurrentUser(nameInput.trim());
 
+      identifyUser(nameInput.trim());
+      track('session_joined', { session_id: id });
+
       fetchSession();
     } catch (err) {
       setError('Failed to join session');
@@ -158,6 +162,7 @@ export default function SessionPage() {
         return;
       }
 
+      track('item_claimed', { item_key: itemKey, quantity });
       fetchSession();
     } catch (err) {
       setClaimError('Failed to claim item');
@@ -182,6 +187,10 @@ export default function SessionPage() {
         return;
       }
 
+      track('split_calculated', {
+        session_id: id,
+        participant_count: sessionData?.session.participants.length || 0,
+      });
       fetchSession();
     } catch (err) {
       setError('Failed to calculate split');
@@ -195,6 +204,7 @@ export default function SessionPage() {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     setCopied(true);
+    track('link_copied', { session_id: id });
     setTimeout(() => setCopied(false), 2000);
   };
 
